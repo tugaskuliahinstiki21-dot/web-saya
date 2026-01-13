@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Singer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-dark': '#0d1117',
+            'card-dark': '#161b22',
+            'accent-gold': '#d4af37',
+            'text-light': '#f0f0f0',
+            'text-muted': '#a0a0a0'
+          },
+          boxShadow: {
+            glow: '0 0 25px rgba(212,175,55,0.15)',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            modalIn: {
+              '0%': { opacity: 0, transform: 'scale(0.9)' },
+              '100%': { opacity: 1, transform: 'scale(1)' }
+            }
+          },
+          animation: {
+            fadeUp: 'fadeUp 0.8s ease-out forwards',
+            modalIn: 'modalIn 0.3s ease-out forwards'
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    .nav-link-effect { position: relative; }
+    .nav-link-effect::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #d4af37;
+      transition: width 0.3s ease;
+    }
+    .nav-link-effect:hover::after { width: 100%; }
+    #dj-modal { backdrop-filter: blur(8px); }
+    .fade-hidden { opacity: 0; transform: translateY(30px); }
+    
+    select option {
+      background-color: #161b22;
+      color: #f0f0f0;
+    }
+    select option:hover,
+    select option:checked {
+      background-color: #d4af37 !important;
+      color: #0d1117 !important;
+    }
+
+    .svg-icon { width: 24px; height: 24px; fill: currentColor; }
+  </style>
+</head>
+
+<body class="bg-bg-dark text-text-light font-sans min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-card-dark border-b border-neutral-800 shadow-glow">
+    <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+      <h1 class="text-2xl font-extrabold text-accent-gold tracking-widest uppercase">The Singer</h1>
+      <nav class="hidden md:flex space-x-8 text-sm font-semibold">
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Home</a>
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Ranking</a>
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Popular Chart</a>
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Events</a>
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">News</a>
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Social</a>
+        <a href="#" class="nav-link-effect hover:text-accent-gold transition">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative text-center py-32 border-b border-neutral-800 bg-cover bg-center" 
+           style="background-image: url('https://images.unsplash.com/photo-1533137098665-47ca60257cec?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative z-10 px-4">
+      <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accent-gold to-gray-300">
+        Indonesian Singer Going International
+      </h1>
+      <p class="text-lg text-gray-300 mt-4 max-w-2xl mx-auto">
+        This page 99% created with Ai assistant, and free.
+      </p>
+    </div>
+  </section>
+
+  <!-- Search + Filter -->
+  <section class="container mx-auto px-6 mt-10">
+    <div class="flex flex-col md:flex-row justify-center mb-10">
+      <div class="relative w-full md:w-3/4">
+        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-accent-gold">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 2a9 9 0 0 1 9 9c0 1.85-.56 3.58-1.5 5.03l4.79 4.79-1.42 1.42-4.79-4.79A9 9 0 1 1 11 2m0 2a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg>
+        </span>
+        <input id="search-input" type="text" placeholder="Search singers..." 
+               class="w-full pl-12 pr-32 py-3 rounded-lg bg-card-dark border border-neutral-700 focus:border-accent-gold focus:outline-none text-text-light placeholder-text-muted">
+        <select id="country-filter" 
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-card-dark border border-neutral-700 text-text-light px-3 py-2 rounded-md text-sm focus:border-accent-gold focus:outline-none transition">
+          <option value="all">All Countries</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Singer Cards -->
+  <main class="container mx-auto px-6 pb-20 flex-grow">
+    <div id="dj-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+  </main>
+
+  <!-- View More Section -->
+  <section class="flex justify-center py-20 bg-gradient-to-b from-bg-dark to-card-dark">
+    <button
+      id="viewMoreBtn"
+      class="px-12 py-5 text-lg rounded-full font-bold text-bg-dark bg-accent-gold hover:bg-accent-gold/90 shadow-[0_0_25px_rgba(212,175,55,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(212,175,55,0.7)]"
+    >
+      View More
+    </button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-card-dark border-t border-neutral-800 mt-auto">
+    <div class="container mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+      <div>
+        <h2 class="text-2xl font-bold text-accent-gold mb-4">Global Beat</h2>
+        <p class="text-text-muted text-sm leading-relaxed">
+          Celebrating Indonesia’s finest talents redefining global music.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-semibold text-accent-gold mb-4">Quick Links</h2>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-accent-gold transition">Rankings</a></li>
+          <li><a href="#" class="hover:text-accent-gold transition">Events</a></li>
+          <li><a href="#" class="hover:text-accent-gold transition">Artist Portal</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-semibold text-accent-gold mb-4">Newsletter</h2>
+        <p class="text-text-muted text-sm mb-3">Get the latest artist updates.</p>
+        <form id="subscribe-form" class="flex" onsubmit="event.preventDefault(); this.reset();">
+          <input type="email" placeholder="Email address" required
+                 class="flex-grow px-4 py-2 rounded-l-lg bg-bg-dark border border-neutral-700 focus:border-accent-gold text-text-light focus:outline-none">
+          <button type="submit" 
+                  class="px-5 bg-accent-gold text-bg-dark font-bold rounded-r-lg hover:bg-accent-gold/90 transition">
+            Join
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="border-t border-neutral-800 text-center py-4 text-sm text-text-muted">
+      © 2025 Global Beat. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div id="dj-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4" 
+       onclick="if(event.target.id==='dj-modal') closeDjModal()">
+    <div id="modal-content" class="bg-card-dark rounded-2xl shadow-glow w-full max-w-2xl transition-all p-6 sm:p-10 border border-neutral-700 animate-modalIn">
+      <div class="flex justify-between items-center mb-6 border-b border-neutral-700 pb-4">
+        <h3 id="modal-rank" class="text-xl font-bold text-accent-gold"></h3>
+        <button onclick="closeDjModal()" class="text-text-light hover:text-accent-gold transition text-3xl font-bold leading-none">&times;</button>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-6">
+        <img id="modal-image" class="w-40 h-40 rounded-lg object-cover object-top shadow-lg border border-neutral-700 mx-auto sm:mx-0" alt="Singer">
+        <div class="text-center sm:text-left">
+          <h2 id="modal-name" class="text-3xl font-extrabold mb-1 text-accent-gold"></h2>
+          <p id="modal-country" class="text-text-muted mb-1"></p>
+          <p id="modal-genre" class="text-sm font-medium bg-neutral-800 inline-block px-3 py-1 rounded-full border border-accent-gold/40 text-accent-gold mb-3"></p>
+          <p id="modal-snippet" class="text-text-light leading-relaxed"></p>
+        </div>
+      </div>
+      <a id="modal-youtube-link" href="#" target="_blank" class="mt-8 flex items-center justify-center gap-2 w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full transition shadow-lg">
+        Watch on YouTube
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const djs = [
+      { rank: 1, 
+      name: "Afgan",
+      country: "Indonesia",
+      genre: "Pop, R&B",
+      snippet: "Afgan, is a popular Indonesian singer and actor known for his soulful pop and R&B style.",
+      img: "https://asset.kompas.com/crops/Kl3u4Mx7ztNZLaSm0zCjYAF4NnM=/0x129:1159x902/1200x800/data/photo/2020/08/04/5f29484aadf95.jpeg",
+      modalImage: "https://www.nme.com/wp-content/uploads/2022/02/afgan-live-panah-asmara@2000x1270-696x442.jpg",
+      youtube: "https://www.youtube.com/watch?v=amoGqcHNJp4" },
+
+      { rank: 2, 
+      name: "Rich Brian",
+      country: "Indonesia",
+      genre: "Hip Hop, Rap", 
+      snippet: "First Asian rapper to top iTunes Hip-Hop charts and a mainstay at international festivals.", 
+      img: "https://asset.kompas.com/crops/LUVP03Kf_tL4TtH1_-L7VZ154zY=/0x57:682x512/1200x800/data/photo/2023/01/27/63d35ff9b1c0c.jpg", 
+      modalImage: "https://media-cldnry.s-nbcnews.com/image/upload/t_nbcnews-fp-1200-630,f_auto,q_auto:best/newscms/2019_47/3115196/191122-rich-brian-al-1224.jpg", 
+      youtube: "https://www.youtube.com/watch?v=K6BRna4_bmg&list=RDK6BRna4_bmg&start_radio=1" },
+
+      { rank: 3, 
+      name: "NIKI", 
+      country: "Indonesia", 
+      genre: "R&B, Pop", 
+      snippet: "Singer-songwriter under 88rising, known for her vintage R&B sound and Coachella performances.", 
+      img: "https://indonesianpolicenews.id/data/uploads/2022/02/NIKI-dailysia.jpg", 
+      modalImage: "https://img.okezone.com/content/2024/05/31/205/3015505/niki-zefanya-artis-indonesia-pertama-yang-tampil-jimmy-kimmel-live-QWl9JkhKux.jpg", 
+      youtube: "https://www.youtube.com/watch?v=N7WMc6pHEos&list=RDN7WMc6pHEos&start_radio=1" },
+
+      { rank: 5, 
+      name: "Stephanie Poetri", 
+      country: "Indonesia", 
+      genre: "Indie Pop", 
+      snippet: "Singer-songwriter known globally for her viral hit ‘I Love You 3000’.", 
+      img: "https://akcdn.detik.net.id/visual/2021/01/17/stephanie-poetri-1.jpeg?w=450&q=90", 
+      modalImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyDSvcWH6eWa_pH2gfXtFtOTNFt7mDhIME9Q&s", 
+      youtube: "https://www.youtube.com/watch?v=0j9jHeJsSNU&list=RD0j9jHeJsSNU&start_radio=1" },
+
+      { rank: 8, 
+      name: "Ardhito Pramono", 
+      country: "Indonesia", 
+      genre: "Jazz, Swing", 
+      snippet: "Multi-instrumentalist with soulful lyrics and sophisticated jazz arrangements.", 
+      img: "https://mmc.tirto.id/image/otf/720x0,q80/2020/04/15/foto-ardhito-pramono_ratio-16x9.jpg", 
+      modalImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPoDQgd6uVLqmEX1h7CR7PIdaZsdi9y7uZb3NJKxXFDW3u61pVmWFD8hSXmAToLcO6W58&usqp=CAU", 
+      youtube: "https://www.youtube.com/watch?v=UD6ehlh0_jM&list=RDUD6ehlh0_jM&start_radio=1" },
+      
+      { rank: 9, 
+      name: "Dita Karang", 
+      country: "Indonesia", 
+      genre: "K-Pop", 
+      snippet: "The first Indonesian to debut in a K-Pop girl group, breaking barriers in the Korean industry.", 
+      img: "https://i.pinimg.com/1200x/0c/79/bf/0c79bf7b38d74db8ddaec0726a3b81d3.jpg", 
+      modalImage: "https://i.pinimg.com/1200x/d7/fb/1f/d7fb1f0a1c8acbeb95ed352c788e2056.jpg", 
+      youtube: "https://www.youtube.com/results?search_query=Dita+Karang" },
+
+      { rank: 10, 
+      name: "Indahkus", 
+      country: "Indonesia", 
+      genre: "Pop EDM Dance-Pop", 
+      snippet: "Versatile artist and medical doctor known for her unique vocals and digital popularity.", 
+      img: "https://cdn1.katadata.co.id/media/images/thumb/2023/06/23/zigi-64955bb174e9f-indahkus_960x640_thumb.jpg", 
+      modalImage: "https://cdn.medcom.id/dynamic/content/2024/07/12/1697590/aZNJRm0FB5.jpg?w=700", 
+      youtube: "https://www.youtube.com/watch?v=ZZOh0YFZcCg&list=RDEMf2cGgHDW9PSB0XMH-ylr0Q&start_radio=1" },
+
+      { rank: 11, 
+      name: "Nona", 
+      country: "Indonesia", 
+      genre: "R&B Dance-Pop", 
+      snippet: "Classically trained musician blending opera with modern rock and metal elements.", 
+      img: "https://akcdn.detik.net.id/visual/2025/04/29/girl-group-indonesia-no-na-2025-1745918738298_169.png?w=1200", 
+      modalImage: "https://cdn.medcom.id/images/library/img/internasional/2023/1000050386.jpg", 
+      youtube: "https://www.youtube.com/watch?v=iMos2bL7idM&list=RDiMos2bL7idM&start_radio=1" },
+
+      { rank: 12, 
+      name: "Rachel Manurung", 
+      country: "Indonesia", 
+      genre: "Pop, Dance-Pop, Latin, Multicultural Fusion", 
+      snippet: "Now United member, She was officially introduced on May 5, 2025 as the group’s 19th member, representing Indonesia.", 
+      img: "https://i.pinimg.com/736x/0f/60/6a/0f606a989909a5eae9161cf699bcce7a.jpg", 
+      modalImage: "https://i.pinimg.com/736x/68/67/c1/6867c103861e3bcca14a3c47f265aea8.jpg", 
+      youtube: "https://www.youtube.com/watch?v=EUU6VcEmtNs&list=RDEUU6VcEmtNs&start_radio=1" },
+
+      { rank: 13, 
+      name: "Papion", 
+      country: "Indonesia", 
+      genre: "Pop, Dance-Pop, Multicultural Fusion", 
+      snippet: "newly debuted global girl group formed under IDN, officially launching on June 14, 2025 with their single “Push the Button.” The group consists of five members from Indonesia, .", 
+      img: "https://womensobsession.com/uploads/post_article/20250808203612-36564.jpg", 
+      modalImage: "https://editorial.femaledaily.com/wp-content/uploads/2025/08/PAPION-3.png", 
+      youtube: "https://www.youtube.com/watch?v=2vlY5yeWKPs&list=RD2vlY5yeWKPs&start_radio=1" },
+
+      { rank: 14, 
+      name: "rendy pandugo", 
+      country: "Indonesia", genre: "Pop, R&B", 
+      snippet: "Afgan, is a popular Indonesian singer and actor known for his soulful pop and R&B style.", 
+      img: "https://cdn.antaranews.com/cache/1200x800/2023/10/11/IMG_20231011_131422.jpg", 
+      modalImage: "https://cdn.medcom.id/dynamic/content/2022/05/28/1431217/WIBMjmlxDb.jpeg?w=700", 
+      youtube: "https://www.youtube.com/watch?v=chhoX-Eq6o0&list=RDchhoX-Eq6o0&start_radio=1" },
+    ];
+
+    const modal = document.getElementById('dj-modal');
+    const modalName = document.getElementById('modal-name');
+    const modalCountry = document.getElementById('modal-country');
+    const modalGenre = document.getElementById('modal-genre');
+    const modalSnippet = document.getElementById('modal-snippet');
+    const modalRank = document.getElementById('modal-rank');
+    const modalImage = document.getElementById('modal-image');
+    const modalYoutubeLink = document.getElementById('modal-youtube-link');
+    const djListContainer = document.getElementById('dj-list-container');
+    const searchInput = document.getElementById('search-input');
+    const countryFilter = document.getElementById('country-filter');
+
+    let currentFilteredList = [...djs];
+    let visibleCount = 8;
+
+    function openDjModal(filteredIndex) {
+      const dj = currentFilteredList[filteredIndex];
+      if (!dj) return;
+      
+      modal.classList.remove('hidden');
+      modalName.textContent = dj.name;
+      modalCountry.textContent = dj.country;
+      modalGenre.textContent = dj.genre;
+      modalSnippet.textContent = dj.snippet;
+      modalRank.textContent = `Global Rank #${dj.rank}`;
+      modalImage.src = dj.modalImage || dj.img;
+      modalYoutubeLink.href = dj.youtube;
+      
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDjModal() {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function renderDjs(list) {
+      djListContainer.innerHTML = list.map((dj, i) => `
+        <div class="dj-card fade-hidden bg-card-dark rounded-xl border border-neutral-800 shadow-glow hover:border-accent-gold hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all duration-500 p-5 group">
+          <div class="w-full h-64 overflow-hidden rounded-lg mb-4 bg-neutral-900 relative">
+            <img src="${dj.img}" alt="${dj.name}" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110">
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all duration-300"></div>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-accent-gold font-black text-xl tracking-tighter">#${dj.rank}</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-text-muted px-2 py-1 bg-neutral-800 rounded">${dj.country}</span>
+          </div>
+          <h2 class="text-xl font-bold text-text-light group-hover:text-accent-gold transition-colors">${dj.name}</h2>
+          <p class="text-sm text-text-muted mb-4 font-medium italic">${dj.genre}</p>
+          <button onclick="openDjModal(${i})" class="w-full py-2.5 rounded-lg bg-accent-gold text-bg-dark font-bold hover:bg-white hover:scale-[1.02] active:scale-95 transition-all duration-200">
+            Profile Details
+          </button>
+        </div>
+      `).join('');
+
+      // Simple Fade-In Logic
+      setTimeout(() => {
+        const cards = document.querySelectorAll('.dj-card');
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.classList.remove('fade-hidden');
+            card.classList.add('animate-fadeUp');
+          }, index * 100);
+        });
+      }, 50);
+    }
+
+    function populateFilter() {
+      const countries = [...new Set(djs.map(dj => dj.country))];
+      countries.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        countryFilter.appendChild(opt);
+      });
+    }
+
+    function updateView() {
+      const query = searchInput.value.toLowerCase();
+      const country = countryFilter.value;
+      
+      currentFilteredList = djs.filter(dj => {
+          const matchSearch = dj.name.toLowerCase().includes(query) || dj.genre.toLowerCase().includes(query);
+          const matchCountry = country === "all" || dj.country === country;
+          return matchSearch && matchCountry;
+      });
+
+      renderDjs(currentFilteredList.slice(0, visibleCount));
+      
+      const viewMoreBtn = document.getElementById('viewMoreBtn');
+      if (visibleCount >= currentFilteredList.length) {
+        viewMoreBtn.classList.add('hidden');
+      } else {
+        viewMoreBtn.classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('viewMoreBtn').addEventListener('click', () => {
+      visibleCount += 4;
+      updateView();
+    });
+
+    searchInput.addEventListener('input', () => {
+        visibleCount = 8;
+        updateView();
+    });
+    
+    countryFilter.addEventListener('change', () => {
+        visibleCount = 8;
+        updateView();
+    });
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+        populateFilter();
+        updateView();
+    });
+  </script>
+
+</body>
+</html>
