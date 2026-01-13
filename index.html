@@ -74,20 +74,28 @@
 <body class="bg-bg-dark text-text-light font-sans min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-card-dark border-b border-neutral-800 shadow-glow">
-    <div class="container mx-auto px-6 py-5 flex justify-between items-center">
-      <h1 class="text-2xl font-extrabold text-accent-gold tracking-widest uppercase">The Singer</h1>
-      <nav class="hidden md:flex space-x-8 text-sm font-semibold">
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Home</a>
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Ranking</a>
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Popular Chart</a>
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Events</a>
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">News</a>
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">Social</a>
-        <a href="#" class="nav-link-effect hover:text-accent-gold transition">About</a>
-      </nav>
-    </div>
-  </header>
+  <header class="bg-card-dark border-b border-neutral-800 shadow-glow relative">
+  <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+    <h1 class="text-2xl font-extrabold text-accent-gold tracking-widest uppercase">The Singer</h1>
+    
+    <button id="mobile-menu-button" class="md:hidden text-accent-gold p-2 focus:outline-none">
+      <svg id="hamburger-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <nav id="nav-menu" class="hidden absolute top-full left-0 w-full bg-card-dark border-b border-neutral-800 flex-col space-y-4 p-6 z-50 
+                 md:static md:flex md:flex-row md:w-auto md:bg-transparent md:border-none md:space-y-0 md:space-x-8 md:p-0 text-sm font-semibold transition-all duration-300">
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">Home</a>
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">Ranking</a>
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">Popular Chart</a>
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">Events</a>
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">News</a>
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">Social</a>
+      <a href="#" class="nav-link-effect hover:text-accent-gold transition">About</a>
+    </nav>
+  </div>
+</header>
 
   <!-- Hero Section -->
   <section class="relative text-center py-32 border-b border-neutral-800 bg-cover bg-center" 
@@ -423,6 +431,28 @@
         populateFilter();
         updateView();
     });
+
+    // Logika menu
+    // Script untuk Hamburger Menu
+const mobileMenuButton = document.getElementById('mobile-menu-button');
+const navMenu = document.getElementById('nav-menu');
+
+mobileMenuButton.addEventListener('click', () => {
+    // Toggle class 'hidden' untuk menampilkan/menyembunyikan menu
+    navMenu.classList.toggle('hidden');
+    navMenu.classList.toggle('flex');
+});
+
+// Menutup menu otomatis jika link diklik (opsional)
+const navLinks = document.querySelectorAll('#nav-menu a');
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth < 768) {
+            navMenu.classList.add('hidden');
+            navMenu.classList.remove('flex');
+        }
+    });
+});
   </script>
 
 </body>
