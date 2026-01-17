@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAB Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+      body {
+        background-color: #f8fafc;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        color: #1e293b;
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          background: white;
+          padding: 0;
+        }
+        .print-shadow {
+          box-shadow: none !important;
+          border: 1px solid #e2e8f0;
+        }
+      }
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background-color: #e2e8f0;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen py-8 px-4">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 no-print">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-indigo-600 rounded-xl text-white">
+            <i data-lucide="calculator" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 text-indigo-900">RABku v1.5 BETA</h1>
+            <p class="text-slate-500 text-sm italic">Dibuat untuk memenuhi pratikum matakuliah OOP</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all">
+            <i data-lucide="printer" class="w-4 h-4"></i> Cetak RAB
+          </button>
+          <button onclick="copySummary()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transition-all">
+            <i data-lucide="share-2" class="w-4 h-4"></i> Bagikan
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left Column: Config -->
+        <div class="lg:col-span-8 space-y-6 no-print">
+          <!-- Parameter Utama -->
+          <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Parameter Proyek</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Luas Bangunan (m²)</label>
+                <input type="number" id="area" oninput="calculateRAB()" value="70" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Jumlah Lantai</label>
+                <select id="floors" onchange="calculateRAB()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold">
+                  <option value="1">1 Lantai</option>
+                  <option value="2">2 Lantai</option>
+                  <option value="3">3 Lantai</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Upah Tukang / m²</label>
+                <input type="number" id="laborPrice" oninput="calculateRAB()" value="1250000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Pemilihan Material Detail -->
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2"><i data-lucide="box" class="w-5 h-5 text-indigo-600"></i> Spesifikasi Material Utama</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6" id="specContainer">
+              <!-- Dynamic Selectors -->
+            </div>
+          </div>
+
+          <!-- Pengaturan Biaya Tambahan -->
+          <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Biaya Lain & Pajak</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Dana Cadangan (%)</label>
+                <input type="number" id="contingency" oninput="calculateRAB()" value="5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Pajak PPN (%)</label>
+                <input type="number" id="tax" oninput="calculateRAB()" value="11" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Biaya IMB/Admin (Rp)</label>
+                <input type="number" id="adminFee" oninput="calculateRAB()" value="2500000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Results & Analysis -->
+        <div class="lg:col-span-4 space-y-6 print-shadow">
+          <div class="bg-slate-900 p-8 rounded-3xl shadow-2xl text-white sticky top-8 border border-slate-800 overflow-hidden">
+            <!-- Glow effect -->
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+              <h3 class="text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em] mb-2">Grand Total Estimasi</h3>
+              <div id="totalDisplay" class="text-4xl font-extrabold text-indigo-400 mb-6">Rp 0</div>
+
+              <div class="space-y-3 pt-6 border-t border-slate-800">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Total Material</span>
+                  <span id="matTotal" class="font-bold">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Total Upah Tenaga</span>
+                  <span id="labTotal" class="font-bold">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Pajak & Cadangan</span>
+                  <span id="taxTotal" class="font-bold text-amber-400">Rp 0</span>
+                </div>
+              </div>
+
+              <div class="mt-8 h-44">
+                <canvas id="rabChart"></canvas>
+              </div>
+
+              <!-- Mini Breakdown -->
+              <div id="groupBreakdown" class="mt-8 space-y-4"></div>
+
+              <div class="mt-8 p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-center no-print">
+                <p class="text-[10px] text-indigo-300">Tip: Simpan sebagai PDF untuk referensi belanja ke toko bangunan.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Section (Bawah) -->
+        <div class="lg:col-span-12 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-slate-800">Rincian Bill of Materials (BoM)</h2>
+            <div class="text-xs text-slate-400 italic">Harga dapat disesuaikan manual di kolom Harga Satuan</div>
+          </div>
+          <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-100 uppercase text-[10px] font-bold tracking-widest">
+                  <th class="pb-4 px-2">Komponen Material</th>
+                  <th class="pb-4 text-center">Volume</th>
+                  <th class="pb-4">Harga Satuan (Rp)</th>
+                  <th class="pb-4 text-right">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="materialTableBody">
+                <!-- Injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Data Material Lebih Luas
+      const materialCatalog = [
+        {
+          id: "pondasi",
+          label: "Pondasi & Struktur",
+          icon: "anchor",
+          options: [
+            { name: "Pondasi Batu Kali + Beton", price: 1200000, unit: "m³", coeff: 0.15 },
+            { name: "Cakar Ayam (Footplat) Full", price: 2500000, unit: "m³", coeff: 0.15 },
+          ],
+        },
+        {
+          id: "tembok",
+          label: "Jenis Dinding",
+          icon: "layers",
+          options: [
+            { name: "Bata Ringan / Hebel (Standard)", price: 650000, unit: "m³", coeff: 0.12 },
+            { name: "Bata Merah (Press)", price: 1100, unit: "pcs", coeff: 72 },
+            { name: "Batako Putih", price: 4000, unit: "pcs", coeff: 18 },
+          ],
+        },
+        {
+          id: "besi",
+          label: "Besi Beton",
+          icon: "hash",
+          options: [
+            { name: "Besi SNI Campuran (8/10/12)", price: 15500, unit: "kg", coeff: 14 },
+            { name: "Besi Full SNI (Heavy Duty)", price: 19500, unit: "kg", coeff: 16 },
+          ],
+        },
+        {
+          id: "lantai",
+          label: "Lantai Utama",
+          icon: "grid",
+          options: [
+            { name: "Granite Tile 60x60 (Single Loading)", price: 175000, unit: "m²", coeff: 1.1 },
+            { name: "Keramik 40x40 (Standard)", price: 75000, unit: "m²", coeff: 1.1 },
+            { name: "Granit Premium 80x80", price: 350000, unit: "m²", coeff: 1.1 },
+          ],
+        },
+        {
+          id: "atap",
+          label: "Rangka & Atap",
+          icon: "home",
+          options: [
+            { name: "Baja Ringan + Genteng Metal Pasir", price: 225000, unit: "m²", coeff: 1.25 },
+            { name: "Baja Ringan + Genteng Keramik", price: 385000, unit: "m²", coeff: 1.25 },
+            { name: "Kayu Glugu + Genteng Tanah Liat", price: 185000, unit: "m²", coeff: 1.3 },
+          ],
+        },
+        {
+          id: "plafon",
+          label: "Plafon",
+          icon: "panel-top",
+          options: [
+            { name: "Gypsum + List Standard", price: 110000, unit: "m²", coeff: 1.05 },
+            { name: "PVC Woodgrain Premium", price: 195000, unit: "m²", coeff: 1.05 },
+          ],
+        },
+      ];
+
+      let userChoices = {};
+      let myChart = null;
+
+      function init() {
+        const container = document.getElementById("specContainer");
+        materialCatalog.forEach((cat) => {
+          userChoices[cat.id] = 0;
+          container.innerHTML += `
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                            <i data-lucide="${cat.icon}" class="w-3 h-3"></i> ${cat.label}
+                        </label>
+                        <select onchange="updateChoice('${cat.id}', this.value)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold">
+                            ${cat.options.map((opt, idx) => `<option value="${idx}">${opt.name}</option>`).join("")}
+                        </select>
+                    </div>
+                `;
+        });
+        lucide.createIcons();
+        calculateRAB();
+      }
+
+      function updateChoice(id, index) {
+        userChoices[id] = parseInt(index);
+        calculateRAB();
+      }
+
+      function formatIDR(num) {
+        return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(num);
+      }
+
+      function calculateRAB() {
+        const area = parseFloat(document.getElementById("area").value) || 0;
+        const floors = parseInt(document.getElementById("floors").value);
+        const laborPrice = parseFloat(document.getElementById("laborPrice").value) || 0;
+        const contingencyPercent = parseFloat(document.getElementById("contingency").value) || 0;
+        const taxPercent = parseFloat(document.getElementById("tax").value) || 0;
+        const adminFee = parseFloat(document.getElementById("adminFee").value) || 0;
+
+        const totalAreaEffective = area * (1 + (floors - 1) * 0.9);
+        const tableBody = document.getElementById("materialTableBody");
+
+        let materialTotal = 0;
+        let htmlTable = "";
+
+        materialCatalog.forEach((cat) => {
+          const opt = cat.options[userChoices[cat.id]];
+          const volume = (totalAreaEffective * opt.coeff).toFixed(1);
+          const subtotal = volume * opt.price;
+          materialTotal += subtotal;
+
+          htmlTable += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-all group">
+                        <td class="py-4 px-2">
+                            <span class="block font-bold text-slate-800">${opt.name}</span>
+                            <span class="text-[9px] text-slate-400 font-bold uppercase">${cat.label}</span>
+                        </td>
+                        <td class="py-4 text-center font-mono text-slate-500 font-bold">${volume} ${opt.unit}</td>
+                        <td class="py-4">
+                            <div class="relative max-w-[150px]">
+                                <span class="absolute left-2 top-2 text-[10px] text-indigo-400 font-bold">Rp</span>
+                                <input type="number" value="${opt.price}" oninput="updatePrice('${cat.id}', this.value)" 
+                                    class="w-full pl-7 p-2 bg-transparent border-b border-dashed border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-700 transition-all">
+                            </div>
+                        </td>
+                        <td class="py-4 text-right font-bold text-slate-900">${formatIDR(subtotal).replace("Rp", "")}</td>
+                    </tr>
+                `;
+        });
+
+        tableBody.innerHTML = htmlTable;
+
+        const totalLabor = totalAreaEffective * laborPrice;
+        const subTotal = materialTotal + totalLabor + adminFee;
+
+        const contingencyValue = subTotal * (contingencyPercent / 100);
+        const taxValue = (subTotal + contingencyValue) * (taxPercent / 100);
+        const grandTotal = subTotal + contingencyValue + taxValue;
+
+        document.getElementById("totalDisplay").innerText = formatIDR(grandTotal);
+        document.getElementById("matTotal").innerText = formatIDR(materialTotal);
+        document.getElementById("labTotal").innerText = formatIDR(totalLabor);
+        document.getElementById("taxTotal").innerText = formatIDR(contingencyValue + taxValue);
+
+        renderChart(materialTotal, totalLabor, contingencyValue + taxValue);
+        renderProgress(materialTotal, totalLabor, contingencyValue + taxValue);
+      }
+
+      function updatePrice(catId, newPrice) {
+        const cat = materialCatalog.find((c) => c.id === catId);
+        const optIndex = userChoices[catId];
+        cat.options[optIndex].price = parseFloat(newPrice) || 0;
+        calculateRAB();
+      }
+
+      function renderChart(mat, lab, tax) {
+        const ctx = document.getElementById("rabChart").getContext("2d");
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Bahan", "Tukang", "Pajak/Lain"],
+            datasets: [
+              {
+                data: [mat, lab, tax],
+                backgroundColor: ["#6366f1", "#10b981", "#f59e0b"],
+                borderWidth: 0,
+                hoverOffset: 15,
+              },
+            ],
+          },
+          options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            cutout: "82%",
+          },
+        });
+      }
+
+      function renderProgress(mat, lab, tax) {
+        const total = mat + lab + tax;
+        const container = document.getElementById("groupBreakdown");
+        const data = [
+          { name: "Material Bangunan", val: mat, color: "bg-indigo-500" },
+          { name: "Upah Tenaga Kerja", val: lab, color: "bg-emerald-500" },
+          { name: "Biaya Cadangan & Pajak", val: tax, color: "bg-amber-500" },
+        ];
+
+        container.innerHTML = data
+          .map(
+            (d) => `
+                <div class="space-y-1">
+                    <div class="flex justify-between text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                        <span>${d.name}</span>
+                        <span class="text-slate-300">${((d.val / total) * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="h-full ${d.color}" style="width: ${(d.val / total) * 100}%"></div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function copySummary() {
+        const total = document.getElementById("totalDisplay").innerText;
+        const text = `RAB RUMAH - HASIL ESTIMASI\n--------------------------\nTotal Biaya: ${total}\nMaterial: ${document.getElementById("matTotal").innerText}\nUpah: ${
+          document.getElementById("labTotal").innerText
+        }\n\nGenerated via RAB Builder Pro.`;
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Ringkasan RAB berhasil disalin ke clipboard!");
+        });
+      }
+
+      function resetForm() {
+        location.reload();
+      }
+
+      window.onload = init;
+    </script>
+  </body>
+</html>
