@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Terra 3D - Global Interactive Atlas</title>
+    <title>Terra 3D - Premium Global Atlas</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2 family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet" />
 
     <script src="https://unpkg.com/globe.gl"></script>
 
@@ -44,21 +44,21 @@
   </head>
   <body class="bg-[#F4F5F8]">
     <div class="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
-      <div class="w-full h-[45%] md:h-full md:w-[38%] bg-[#FDFDFE] text-[#1E2022] p-6 md:p-12 flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100 z-10 shadow-sm overflow-y-auto">
+      <div class="w-full h-[45%] md:h-full md:w-[35%] bg-[#FDFDFE] text-[#1E2022] p-6 md:p-12 flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100 z-10 shadow-sm overflow-y-auto">
         <div>
-          <div class="flex items-center justify-between mb-6 md:mb-10">
+          <div class="flex items-center justify-between mb-8">
             <div>
               <h1 class="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Live Global Encyclopedia</h1>
               <p class="text-xl font-extrabold tracking-tight text-gray-900 mt-0.5">TERRA 3D</p>
             </div>
-            <span id="regionBadge" class="text-[11px] bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-semibold tracking-wide border border-blue-100/50">Dunia</span>
+            <span id="regionBadge" class="text-[11px] bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-semibold border border-blue-100/50">Dunia</span>
           </div>
 
-          <div class="relative mb-8 md:mb-12">
+          <div class="relative mb-8">
             <input
               type="text"
               id="searchInp"
-              placeholder="Cari negara... (Contoh: Indonesia, Japan, Egypt)"
+              placeholder="Cari... (Indonesia, Jepang, Egypt, USA)"
               class="w-full bg-gray-50/80 border border-gray-200/80 rounded-xl py-3.5 pl-4 pr-12 text-sm focus:outline-none focus:border-gray-400 focus:bg-white transition-all shadow-sm placeholder-gray-400 font-medium"
             />
             <button onclick="handleSearch()" class="absolute right-3 top-3 bg-gray-900 text-white rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-gray-800 transition-all">Cari</button>
@@ -67,8 +67,8 @@
           <div id="infoContent" class="fade-in">
             <div id="welcomeArea">
               <div class="text-5xl mb-4" id="countryFlag">🌍</div>
-              <h2 class="text-3xl md:text-4xl font-bold serif-title tracking-tight text-gray-900" id="countryName">Selamat Datang</h2>
-              <p class="text-sm text-gray-500 mt-3 leading-relaxed" id="countrySub">Aplikasi telah diperbaiki dan terhubung langsung menggunakan pencarian pintar data internet secara real-time. Masukkan nama negara global untuk mencoba.</p>
+              <h2 class="text-3xl font-bold serif-title tracking-tight text-gray-900" id="countryName">Selamat Datang</h2>
+              <p class="text-sm text-gray-500 mt-3 leading-relaxed" id="countrySub">Sistem Multi-API Cadangan telah aktif. Masukkan nama negara dalam Bahasa Indonesia atau Inggris untuk melacak posisi koordinat secara instan.</p>
             </div>
 
             <div class="mt-8 space-y-5" id="statsArea" style="display: none">
@@ -84,11 +84,11 @@
                   <p class="text-sm font-semibold text-gray-800 mt-1" id="countryPop">-</p>
                 </div>
                 <div class="bg-gray-50/50 p-3.5 rounded-xl border border-gray-100/70">
-                  <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Bahasa Utama</p>
+                  <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Benua / Wilayah</p>
                   <p class="text-sm font-semibold text-gray-800 mt-1" id="countryLang">-</p>
                 </div>
                 <div class="bg-gray-50/50 p-3.5 rounded-xl border border-gray-100/70">
-                  <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Mata Uang</p>
+                  <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Kode Negara</p>
                   <p class="text-sm font-semibold text-gray-800 mt-1" id="countryCurrency">-</p>
                 </div>
               </div>
@@ -97,11 +97,11 @@
         </div>
 
         <div class="pt-4 border-t border-gray-100 hidden md:block">
-          <p class="text-[11px] text-gray-400 leading-relaxed font-medium">Data ditarik secara real-time dari infrastruktur database internasional terbuka.</p>
+          <p class="text-[11px] text-gray-400 leading-relaxed font-medium">Infrastruktur portabel dengan proteksi kegagalan request jaringan multi-arah.</p>
         </div>
       </div>
 
-      <div class="w-full h-[55%] md:h-full md:w-[62%] bg-[#050914] flex items-center justify-center relative">
+      <div class="w-full h-[55%] md:h-full md:w-[65%] bg-[#050914] flex items-center justify-center relative">
         <div id="globeVis" class="w-full h-full flex items-center justify-center"></div>
 
         <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 pointer-events-none bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-2xl z-20">
@@ -111,20 +111,41 @@
     </div>
 
     <script>
+      // Kamus translasi sederhana untuk mendeteksi input Bahasa Indonesia umum ke standar API internasional
+      const dictionary = {
+        jepang: "japan",
+        mesir: "egypt",
+        jerman: "germany",
+        perancis: "france",
+        prancis: "france",
+        inggris: "united kingdom",
+        amerika: "usa",
+        "amerika serikat": "usa",
+        rusia: "russia",
+        china: "china",
+        tiongkok: "china",
+      };
+
       const element = document.getElementById("globeVis");
 
-      // Inisialisasi dasar Globe dengan pencahayaan optimal
+      // Inisialisasi awal Globe malam mewah bercahaya terang
       const world = Globe()(element)
         .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-night.jpg")
         .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
         .backgroundColor("#050914")
         .showAtmosphere(true)
         .atmosphereColor("#2563eb")
-        .atmospherePower(2.8);
+        .atmospherePower(2.8)
+        .pointsData([])
+        .pointLat("lat")
+        .pointLng("lng")
+        .pointColor(() => "#ff3b30") // Pin merah neon menyala terinspirasi dari visual premium portfolio
+        .pointRadius(0.7)
+        .pointAltitude(0.18);
 
-      // Menambahkan Ambient Light Three.js ekstra agar daratan bumi jauh lebih jelas terlihat
+      // Injeksi Ambient Light agar peta daratan malam benderang dan seimbang
       const scene = world.scene();
-      const ambientLight = new THREE.AmbientLight("#ffffff", 1.2); // Menaikkan intensitas ke 1.2 agar lebih benderang
+      const ambientLight = new THREE.AmbientLight("#ffffff", 1.4);
       scene.add(ambientLight);
 
       world.controls().autoRotate = true;
@@ -135,73 +156,101 @@
         world.height(element.clientHeight);
       });
 
-      // SISTEM PENCARIAN PINTAR ANTI-ERROR DENGAN REST COUNTRIES API
+      // STRATEGI UTAMA: COBA API 1, JIKA GAGAL OTOMATIS LEMPAR KE API 2
       function fetchCountryData(countryName) {
-        document.getElementById("countryName").innerText = "Mencari...";
-        document.getElementById("countrySub").innerText = "Sedang menghubungi database global...";
+        let query = countryName.toLowerCase().trim();
+        // Jalankan fitur translasi jika user mengetik dalam bahasa indonesia baku
+        if (dictionary[query]) {
+          query = dictionary[query];
+        }
 
-        // Menggunakan endpoint pencarian parsial nama yang jauh lebih aman dari error typo kecil
-        fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName.trim())}`)
+        document.getElementById("countryName").innerText = "Memuat...";
+        document.getElementById("countrySub").innerText = "Sedang mengunduh data koordinat global terverifikasi...";
+
+        // STRATEGI JALUR UTAMA (REST Countries)
+        fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(query)}`)
           .then((res) => {
-            if (!res.ok) throw new Error("Negara tidak ditemukan");
+            if (!res.ok) throw new Error("API Utama Down/Gagal");
             return res.json();
           })
           .then((dataArr) => {
-            if (!dataArr || dataArr.length === 0) throw new Error("Data kosong");
-
             const countryData = dataArr[0];
-            triggerUIAnimation();
-            displayDataToUI(countryData);
-
-            // Penanganan koordinat lokasi kamera terbang secara dinamis
-            if (countryData.latlng && countryData.latlng.length >= 2) {
-              const lat = countryData.latlng[0];
-              const lng = countryData.latlng[1];
-
-              world.controls().autoRotate = false;
-              // Kamera meluncur presisi dengan zoom optimal (altitude: 1.5)
-              world.pointOfView({ lat: lat, lng: lng, altitude: 1.5 }, 2200);
-            }
+            handleSuccessRoute(
+              countryData.name.common,
+              countryData.name.official,
+              countryData.capital ? countryData.capital[0] : "N/A",
+              countryData.population,
+              countryData.region,
+              countryData.cca2,
+              countryData.latlng[0],
+              countryData.latlng[1],
+              countryData.flag,
+            );
           })
           .catch((err) => {
-            console.error(err);
-            triggerUIAnimation();
-            document.getElementById("countryFlag").innerText = "⚠️";
-            document.getElementById("countryName").innerText = "Tidak Ditemukan";
-            document.getElementById("countrySub").innerText = `Gagal memuat "${countryName}". Pastikan ejaan dalam Bahasa Inggris (Contoh: 'Japan', 'Indonesia', 'Egypt', 'Canada').`;
-            document.getElementById("statsArea").style.display = "none";
-            document.getElementById("regionBadge").innerText = "Dunia";
+            console.warn("Mencoba Jalur Cadangan (API 2) karena rute utama terhambat:", err.message);
+            // STRATEGI JALUR CADANGAN (Disease.sh / Open Data Geografis Global yang sangat stabil)
+            fetch(`https://disease.sh/v3/covid-19/countries/${encodeURIComponent(query)}?strict=false`)
+              .then((resCadangan) => {
+                if (!resCadangan.ok) throw new Error("Kedua API mengalami downtime internet.");
+                return resCadangan.json();
+              })
+              .then((dataCadangan) => {
+                if (!dataCadangan.countryInfo) throw new Error("Data tidak ditemukan");
+
+                // Map data cadangan agar strukturnya sama rapi
+                handleSuccessRoute(
+                  dataCadangan.country,
+                  dataCadangan.country,
+                  "Tersedia Online",
+                  dataCadangan.population,
+                  dataCadangan.continent || "Global",
+                  dataCadangan.countryInfo.iso2,
+                  dataCadangan.countryInfo.lat,
+                  dataCadangan.countryInfo.long,
+                  "",
+                );
+              })
+              .catch((errTotal) => {
+                console.error(errTotal);
+                triggerUIAnimation();
+                document.getElementById("countryFlag").innerText = "⚠️";
+                document.getElementById("countryName").innerText = "Gagal Memuat";
+                document.getElementById("countrySub").innerText = `Koneksi ke server data global terputus. Silakan periksa jaringan internet Anda atau coba ejaan lain.`;
+                document.getElementById("statsArea").style.display = "none";
+              });
           });
       }
 
-      function displayDataToUI(country) {
-        document.getElementById("countryFlag").innerText = country.flag || "📍";
-        document.getElementById("countryName").innerText = country.name.common;
-        document.getElementById("countrySub").innerText = `Berhasil memuat profil data geografis resmi untuk wilayah ${country.name.official}.`;
+      // Eksekusi pembaruan UI dan animasi rotasi kamera globe
+      function handleSuccessRoute(commonName, officialName, capital, population, region, isoCode, lat, lng, flagEmoji) {
+        triggerUIAnimation();
 
-        document.getElementById("countryCapital").innerText = country.capital ? country.capital[0] : "Tidak tersedia";
+        // Update UI Kiri
+        document.getElementById("countryFlag").innerText = flagEmoji || "📍";
+        document.getElementById("countryName").innerText = commonName;
+        document.getElementById("countrySub").innerText = `Berhasil memuat profil data spasial untuk wilayah resmi ${officialName}.`;
 
-        const pop = country.population;
-        let formattedPop = pop.toLocaleString("id-ID") + " Jiwa";
-        if (pop >= 1000000) formattedPop = (pop / 1000000).toFixed(1) + " Juta Jiwa";
-        if (pop >= 1000000000) formattedPop = (pop / 1000000000).toFixed(1) + " Miliar Jiwa";
+        document.getElementById("countryCapital").innerText = capital;
+
+        // Format angka besar populasi agar manis dibaca
+        let formattedPop = population.toLocaleString("id-ID") + " Jiwa";
+        if (population >= 1000000) formattedPop = (population / 1000000).toFixed(1) + " Juta Jiwa";
+        if (population >= 1000000000) formattedPop = (population / 1000000000).toFixed(1) + " Miliar Jiwa";
+
         document.getElementById("countryPop").innerText = formattedPop;
+        document.getElementById("countryLang").innerText = region;
+        document.getElementById("countryCurrency").innerText = isoCode || "-";
+        document.getElementById("regionBadge").innerText = region;
 
-        if (country.languages) {
-          document.getElementById("countryLang").innerText = Object.values(country.languages).slice(0, 2).join(", ");
-        } else {
-          document.getElementById("countryLang").innerText = "-";
-        }
-
-        if (country.currencies) {
-          const currKey = Object.keys(country.currencies)[0];
-          document.getElementById("countryCurrency").innerText = `${country.currencies[currKey].name} (${country.currencies[currKey].symbol || ""})`;
-        } else {
-          document.getElementById("countryCurrency").innerText = "-";
-        }
-
-        document.getElementById("regionBadge").innerText = country.region;
         document.getElementById("statsArea").style.display = "block";
+
+        // Set Marker Pin Merah 3D di Bola Bumi
+        world.pointsData([{ lat: lat, lng: lng }]);
+
+        // Terbangkan kamera secara elegan
+        world.controls().autoRotate = false;
+        world.pointOfView({ lat: lat, lng: lng, altitude: 1.4 }, 2000);
       }
 
       function triggerUIAnimation() {
